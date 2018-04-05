@@ -1,0 +1,517 @@
+var _user$project$IpCalc$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$none;
+};
+var _user$project$IpCalc$bitsToString = function (bits) {
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		_elm_lang$core$Basics$toString((bits & (255 << 24)) >>> 24),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'.',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_elm_lang$core$Basics$toString((bits & (255 << 16)) >>> 16),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'.',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString((bits & (255 << 8)) >>> 8),
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'.',
+							_elm_lang$core$Basics$toString(bits & 255)))))));
+};
+var _user$project$IpCalc$cidrToBits = function (cidr) {
+	return (~0) << (32 - cidr);
+};
+var _user$project$IpCalc$addressToBits = function (addr) {
+	return (addr.octet0 << 24) | ((addr.octet1 << 16) | ((addr.octet2 << 8) | addr.octet3));
+};
+var _user$project$IpCalc$viewNetwork = function (model) {
+	var maskBits = _user$project$IpCalc$cidrToBits(model.ipAddress.cidr);
+	var addressBits = _user$project$IpCalc$addressToBits(model.ipAddress);
+	var networkBits = addressBits & maskBits;
+	var networkStr = A2(
+		_elm_lang$core$Basics_ops['++'],
+		_user$project$IpCalc$bitsToString(networkBits),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'/',
+			_elm_lang$core$Basics$toString(model.ipAddress.cidr)));
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('Network : '),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(networkStr),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$IpCalc$viewBroadcast = function (model) {
+	var maskBits = _user$project$IpCalc$cidrToBits(model.ipAddress.cidr);
+	var wildCardBits = ~maskBits;
+	var addressBits = _user$project$IpCalc$addressToBits(model.ipAddress);
+	var broadcastBits = addressBits | wildCardBits;
+	var broadcastStr = _user$project$IpCalc$bitsToString(broadcastBits);
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('Broadcast : '),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(broadcastStr),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$IpCalc$viewWildCard = function (model) {
+	var maskBits = _user$project$IpCalc$cidrToBits(model.ipAddress.cidr);
+	var wildCardBits = ~maskBits;
+	var wildCardStr = _user$project$IpCalc$bitsToString(wildCardBits);
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('Wildcard : '),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(wildCardStr),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$IpCalc$viewNetMask = function (model) {
+	var maskStr = _user$project$IpCalc$bitsToString(
+		_user$project$IpCalc$cidrToBits(model.ipAddress.cidr));
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('Netmask : '),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(maskStr),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$IpCalc$viewIpAddress = function (model) {
+	var addressStr = _user$project$IpCalc$bitsToString(
+		_user$project$IpCalc$addressToBits(model.ipAddress));
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('Host Address : '),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(addressStr),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$IpCalc$Model = function (a) {
+	return {ipAddress: a};
+};
+var _user$project$IpCalc$IpAddress = F5(
+	function (a, b, c, d, e) {
+		return {octet0: a, octet1: b, octet2: c, octet3: d, cidr: e};
+	});
+var _user$project$IpCalc$initialModel = {
+	ipAddress: A5(_user$project$IpCalc$IpAddress, 192, 168, 0, 1, 24)
+};
+var _user$project$IpCalc$init = {ctor: '_Tuple2', _0: _user$project$IpCalc$initialModel, _1: _elm_lang$core$Platform_Cmd$none};
+var _user$project$IpCalc$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'ChangeOctet0':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							ipAddress: A5(
+								_user$project$IpCalc$IpAddress,
+								A2(
+									_elm_lang$core$Result$withDefault,
+									0,
+									_elm_lang$core$String$toInt(_p0._0)),
+								model.ipAddress.octet1,
+								model.ipAddress.octet2,
+								model.ipAddress.octet3,
+								model.ipAddress.cidr)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ChangeOctet1':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							ipAddress: A5(
+								_user$project$IpCalc$IpAddress,
+								model.ipAddress.octet0,
+								A2(
+									_elm_lang$core$Result$withDefault,
+									0,
+									_elm_lang$core$String$toInt(_p0._0)),
+								model.ipAddress.octet2,
+								model.ipAddress.octet3,
+								model.ipAddress.cidr)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ChangeOctet2':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							ipAddress: A5(
+								_user$project$IpCalc$IpAddress,
+								model.ipAddress.octet0,
+								model.ipAddress.octet1,
+								A2(
+									_elm_lang$core$Result$withDefault,
+									0,
+									_elm_lang$core$String$toInt(_p0._0)),
+								model.ipAddress.octet3,
+								model.ipAddress.cidr)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ChangeOctet3':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							ipAddress: A5(
+								_user$project$IpCalc$IpAddress,
+								model.ipAddress.octet0,
+								model.ipAddress.octet1,
+								model.ipAddress.octet2,
+								A2(
+									_elm_lang$core$Result$withDefault,
+									0,
+									_elm_lang$core$String$toInt(_p0._0)),
+								model.ipAddress.cidr)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							ipAddress: A5(
+								_user$project$IpCalc$IpAddress,
+								model.ipAddress.octet0,
+								model.ipAddress.octet1,
+								model.ipAddress.octet2,
+								model.ipAddress.octet3,
+								A2(
+									_elm_lang$core$Result$withDefault,
+									0,
+									_elm_lang$core$String$toInt(_p0._0)))
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
+var _user$project$IpCalc$ChangeCidr = function (a) {
+	return {ctor: 'ChangeCidr', _0: a};
+};
+var _user$project$IpCalc$ChangeOctet3 = function (a) {
+	return {ctor: 'ChangeOctet3', _0: a};
+};
+var _user$project$IpCalc$ChangeOctet2 = function (a) {
+	return {ctor: 'ChangeOctet2', _0: a};
+};
+var _user$project$IpCalc$ChangeOctet1 = function (a) {
+	return {ctor: 'ChangeOctet1', _0: a};
+};
+var _user$project$IpCalc$ChangeOctet0 = function (a) {
+	return {ctor: 'ChangeOctet0', _0: a};
+};
+var _user$project$IpCalc$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('Ip Address : '),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$input,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onInput(_user$project$IpCalc$ChangeOctet0),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$type_('number'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$size(3),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$min('0'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$max('255'),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$maxlength(3),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$pattern('[0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]'),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$required(true),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$defaultValue(
+															_elm_lang$core$Basics$toString(model.ipAddress.octet0)),
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					{ctor: '[]'}),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('.'),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$input,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onInput(_user$project$IpCalc$ChangeOctet1),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$type_('number'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$size(3),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$min('0'),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$max('255'),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$maxlength(3),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$pattern('[0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]'),
+														_1: {
+															ctor: '::',
+															_0: _elm_lang$html$Html_Attributes$required(true),
+															_1: {
+																ctor: '::',
+																_0: _elm_lang$html$Html_Attributes$defaultValue(
+																	_elm_lang$core$Basics$toString(model.ipAddress.octet1)),
+																_1: {ctor: '[]'}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							},
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('.'),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$input,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onInput(_user$project$IpCalc$ChangeOctet2),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$type_('number'),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$size(3),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$min('0'),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$max('255'),
+														_1: {
+															ctor: '::',
+															_0: _elm_lang$html$Html_Attributes$maxlength(3),
+															_1: {
+																ctor: '::',
+																_0: _elm_lang$html$Html_Attributes$pattern('[0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]'),
+																_1: {
+																	ctor: '::',
+																	_0: _elm_lang$html$Html_Attributes$required(true),
+																	_1: {
+																		ctor: '::',
+																		_0: _elm_lang$html$Html_Attributes$defaultValue(
+																			_elm_lang$core$Basics$toString(model.ipAddress.octet2)),
+																		_1: {ctor: '[]'}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									},
+									{ctor: '[]'}),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('.'),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$input,
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Events$onInput(_user$project$IpCalc$ChangeOctet3),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$type_('number'),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$size(3),
+														_1: {
+															ctor: '::',
+															_0: _elm_lang$html$Html_Attributes$min('0'),
+															_1: {
+																ctor: '::',
+																_0: _elm_lang$html$Html_Attributes$max('255'),
+																_1: {
+																	ctor: '::',
+																	_0: _elm_lang$html$Html_Attributes$maxlength(3),
+																	_1: {
+																		ctor: '::',
+																		_0: _elm_lang$html$Html_Attributes$pattern('[0-9]|[0-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5]'),
+																		_1: {
+																			ctor: '::',
+																			_0: _elm_lang$html$Html_Attributes$required(true),
+																			_1: {
+																				ctor: '::',
+																				_0: _elm_lang$html$Html_Attributes$defaultValue(
+																					_elm_lang$core$Basics$toString(model.ipAddress.octet3)),
+																				_1: {ctor: '[]'}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											},
+											{ctor: '[]'}),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('/'),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$input,
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html_Events$onInput(_user$project$IpCalc$ChangeCidr),
+														_1: {
+															ctor: '::',
+															_0: _elm_lang$html$Html_Attributes$type_('number'),
+															_1: {
+																ctor: '::',
+																_0: _elm_lang$html$Html_Attributes$size(2),
+																_1: {
+																	ctor: '::',
+																	_0: _elm_lang$html$Html_Attributes$min('1'),
+																	_1: {
+																		ctor: '::',
+																		_0: _elm_lang$html$Html_Attributes$max('32'),
+																		_1: {
+																			ctor: '::',
+																			_0: _elm_lang$html$Html_Attributes$maxlength(2),
+																			_1: {
+																				ctor: '::',
+																				_0: _elm_lang$html$Html_Attributes$pattern('[1-9]|[12][0-9]|3[0-2]'),
+																				_1: {
+																					ctor: '::',
+																					_0: _elm_lang$html$Html_Attributes$required(true),
+																					_1: {
+																						ctor: '::',
+																						_0: _elm_lang$html$Html_Attributes$defaultValue(
+																							_elm_lang$core$Basics$toString(model.ipAddress.cidr)),
+																						_1: {ctor: '[]'}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													},
+													{ctor: '[]'}),
+												_1: {
+													ctor: '::',
+													_0: _user$project$IpCalc$viewIpAddress(model),
+													_1: {
+														ctor: '::',
+														_0: _user$project$IpCalc$viewNetMask(model),
+														_1: {
+															ctor: '::',
+															_0: _user$project$IpCalc$viewWildCard(model),
+															_1: {
+																ctor: '::',
+																_0: _user$project$IpCalc$viewBroadcast(model),
+																_1: {
+																	ctor: '::',
+																	_0: _user$project$IpCalc$viewNetwork(model),
+																	_1: {ctor: '[]'}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		});
+};
+var _user$project$IpCalc$main = _elm_lang$html$Html$program(
+	{init: _user$project$IpCalc$init, view: _user$project$IpCalc$view, update: _user$project$IpCalc$update, subscriptions: _user$project$IpCalc$subscriptions})();
