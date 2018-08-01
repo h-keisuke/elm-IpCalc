@@ -28,6 +28,22 @@ var _user$project$IpCalc$cidrToBits = function (cidr) {
 var _user$project$IpCalc$addressToBits = function (addr) {
 	return (addr.octet0 << 24) | ((addr.octet1 << 16) | ((addr.octet2 << 8) | addr.octet3));
 };
+var _user$project$IpCalc$viewHosts = function (model) {
+	var hosts = (~_user$project$IpCalc$cidrToBits(model.ipAddress.cidr)) + 1;
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('Hosts : '),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(
+					_elm_lang$core$Basics$toString(hosts)),
+				_1: {ctor: '[]'}
+			}
+		});
+};
 var _user$project$IpCalc$viewNetwork = function (model) {
 	var maskBits = _user$project$IpCalc$cidrToBits(model.ipAddress.cidr);
 	var addressBits = _user$project$IpCalc$addressToBits(model.ipAddress);
@@ -496,7 +512,11 @@ var _user$project$IpCalc$view = function (model) {
 																_1: {
 																	ctor: '::',
 																	_0: _user$project$IpCalc$viewNetwork(model),
-																	_1: {ctor: '[]'}
+																	_1: {
+																		ctor: '::',
+																		_0: _user$project$IpCalc$viewHosts(model),
+																		_1: {ctor: '[]'}
+																	}
 																}
 															}
 														}

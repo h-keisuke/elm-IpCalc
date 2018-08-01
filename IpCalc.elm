@@ -125,6 +125,7 @@ view model =
         , viewWildCard model
         , viewBroadcast model
         , viewNetwork model
+        , viewHosts model
         ]
 
 
@@ -212,6 +213,18 @@ viewNetwork model =
         div []
             [ text "Network : "
             , text networkStr
+            ]
+
+
+viewHosts : Model -> Html Msg
+viewHosts model =
+    let
+        hosts =
+            complement (cidrToBits model.ipAddress.cidr) + 1
+    in
+        div []
+            [ text "Hosts : "
+            , text (toString hosts)
             ]
 
 
